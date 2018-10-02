@@ -1,0 +1,20 @@
+package: github.com/agungdwiprasetyo/agungkiki-backend
+import:
+- package: github.com/agungdwiprasetyo/go-utils
+  subpackages:
+  - debug
+- package: github.com/graphql-go/graphql
+  version: ~0.7.6
+- package: github.com/labstack/echo
+  version: 3.2.6
+  subpackages:
+  - '...'
+- package: github.com/jmoiron/sqlx
+- package: github.com/lib/pq
+  version: ~1.0.0
+- package: github.com/joho/godotenv
+  version: ~1.2.0
+- package: github.com/go-redis/redis
+  version: ^6.14.1
+- package: github.com/dgrijalva/jwt-go
+  version: ^3.2.0
