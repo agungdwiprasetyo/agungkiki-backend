@@ -18,3 +18,8 @@ import:
   version: ^6.14.1
 - package: github.com/dgrijalva/jwt-go
   version: ^3.2.0
+- package: gopkg.in/mgo.v2
+  subpackages:
+  - bson
+- package: github.com/hashicorp/go-multierror
+  version: ^1.0.0

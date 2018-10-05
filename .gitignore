@@ -1,3 +1,5 @@
 vendor/
 glide.lock
 agungkiki-backend
+gin-bin
+rundev

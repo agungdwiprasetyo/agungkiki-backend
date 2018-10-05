@@ -1,0 +1,15 @@
+language: go
+sudo: required
+go:
+  - 1.10
+
+addons:
+  apt:
+    sources:
+    - sourceline: ppa:masterminds/glide
+    packages:
+    - glide
+
+install:
+  - glide install
+  - go build
