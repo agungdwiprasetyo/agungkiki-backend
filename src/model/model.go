@@ -1,17 +1,20 @@
 package model
 
 import (
+	"time"
+
 	"github.com/graphql-go/graphql"
 	"gopkg.in/mgo.v2/bson"
 )
 
 // Invitation model
 type Invitation struct {
-	ID       bson.ObjectId `json:"id" bson:"_id"`
-	Name     string        `json:"name" bson:"name"`
-	Email    string        `json:"email" bson:"email"`
-	Message  string        `json:"message" bson:"message"`
-	IsAttend bool          `json:"isAttend" bson:"is_attend"`
+	ID        bson.ObjectId `json:"id" bson:"_id"`
+	Name      string        `json:"name" bson:"name"`
+	Email     string        `json:"email" bson:"email"`
+	Message   string        `json:"message" bson:"message"`
+	IsAttend  bool          `json:"isAttend" bson:"is_attend"`
+	CreatedAt time.Time     `json:"created" bson:"created"`
 }
 
 var InvitationType = graphql.NewObject(graphql.ObjectConfig{
@@ -31,6 +34,9 @@ var InvitationType = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"isAttend": &graphql.Field{
 			Type: graphql.Boolean,
+		},
+		"created": &graphql.Field{
+			Type: graphql.DateTime,
 		},
 	},
 })

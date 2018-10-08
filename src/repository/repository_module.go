@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -99,7 +101,10 @@ func (r *invitationRepo) Save(obj *model.Invitation) <-chan Result {
 	go func() {
 		defer close(output)
 
+		loc, _ := time.LoadLocation("Asia/Jakarta")
+
 		obj.ID = bson.NewObjectId()
+		obj.CreatedAt = time.Now().In(loc)
 		if err := r.db.C("invitations").Insert(obj); err != nil {
 			output <- Result{Error: err}
 			return
