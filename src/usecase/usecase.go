@@ -7,11 +7,12 @@ import (
 
 // InvitationUsecase abstract interface
 type InvitationUsecase interface {
-	GetAll() (int, []model.Invitation)
+	GetAll(offset, limit int) (int, []model.Invitation)
 	GetByEmail(email string) *model.Invitation
 	GetByName(name string) (int, []model.Invitation)
 	GetCount(isAttend bool) (int, error)
 	Save(data *model.Invitation) error
+	Remove(emails []string) error
 }
 
 // NewInvitationUsecase create new usecase

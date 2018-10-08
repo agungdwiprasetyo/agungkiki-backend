@@ -6,7 +6,9 @@ import (
 
 // GetAll graphql query
 func (p *InvitationPresenter) getAll(params graphql.ResolveParams) (interface{}, error) {
-	_, data := p.invitationUsecase.GetAll()
+	offset, _ := params.Args["offset"].(int)
+	limit, _ := params.Args["limit"].(int)
+	_, data := p.invitationUsecase.GetAll(offset, limit)
 	return data, nil
 }
 

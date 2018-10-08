@@ -10,8 +10,9 @@ type invitationUsecase struct {
 	repo repository.InvitationRepository
 }
 
-func (uc *invitationUsecase) GetAll() (int, []model.Invitation) {
-	result := <-uc.repo.FindAll()
+func (uc *invitationUsecase) GetAll(offset, limit int) (int, []model.Invitation) {
+	offset = (offset - 1) * limit
+	result := <-uc.repo.FindAll(offset, limit)
 	if result.Error != nil {
 		return 0, nil
 	}
@@ -50,4 +51,15 @@ func (uc *invitationUsecase) GetCount(isAttend bool) (int, error) {
 func (uc *invitationUsecase) Save(obj *model.Invitation) error {
 	result := <-uc.repo.Save(obj)
 	return result.Error
+}
+
+func (uc *invitationUsecase) Remove(emails []string) error {
+	for _, email := range emails {
+		res := <-uc.repo.RemoveByEmail(email)
+		if res.Error != nil {
+			return res.Error
+		}
+	}
+
+	return nil
 }

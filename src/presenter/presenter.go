@@ -22,7 +22,10 @@ func NewInvitationPresenter(invitationUsecase usecase.InvitationUsecase) *Invita
 // Mount http router to presenter
 func (p *InvitationPresenter) Mount(router *echo.Group) {
 	router.GET("/root", p.initGraphqlRoot)
-	router.POST("/save", p.save)
+
+	router.GET("/all", p.GetAll)
+	router.POST("/save", p.Save)
+	router.DELETE("/remove", p.Remove)
 }
 
 // InitGraphqlRoot handler
@@ -34,8 +37,16 @@ func (p *InvitationPresenter) initGraphqlRoot(c echo.Context) error {
 			Name: "RootQuery",
 			Fields: graphql.Fields{
 				"get_all_invitation": &graphql.Field{
-					Name:    "GetAll",
-					Type:    graphql.NewList(model.InvitationType),
+					Name: "GetAll",
+					Type: graphql.NewList(model.InvitationType),
+					Args: graphql.FieldConfigArgument{
+						"offset": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+						"limit": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+					},
 					Resolve: p.getAll,
 				},
 				"get_by_email": &graphql.Field{

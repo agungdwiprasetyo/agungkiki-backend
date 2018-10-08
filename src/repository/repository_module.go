@@ -19,19 +19,21 @@ func NewInvitationRepository(db *mgo.Database) InvitationRepository {
 	return repo
 }
 
-func (r *invitationRepo) FindAll() <-chan Result {
+func (r *invitationRepo) FindAll(offset, limit int) <-chan Result {
 	output := make(chan Result)
 
 	go func() {
 		defer close(output)
 
 		var invitations []model.Invitation
-		if err := r.db.C("invitations").Find(bson.M{}).All(&invitations); err != nil {
+		query := r.db.C("invitations").Find(bson.M{}).Sort("-created")
+		count, _ := query.Count()
+		if err := query.Skip(offset).Limit(limit).All(&invitations); err != nil {
 			output <- Result{Error: err}
 			return
 		}
 
-		output <- Result{Data: invitations}
+		output <- Result{Count: count, Data: invitations}
 	}()
 
 	return output
@@ -111,6 +113,20 @@ func (r *invitationRepo) Save(obj *model.Invitation) <-chan Result {
 		}
 
 		output <- Result{Data: obj}
+	}()
+
+	return output
+}
+
+func (r *invitationRepo) RemoveByEmail(email string) <-chan Result {
+	output := make(chan Result)
+
+	go func() {
+		defer close(output)
+
+		if err := r.db.C("invitations").Remove(bson.M{"email": email}); err != nil {
+			output <- Result{Error: err}
+		}
 	}()
 
 	return output
