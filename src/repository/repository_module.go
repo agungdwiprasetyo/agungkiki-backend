@@ -74,6 +74,25 @@ func (r *invitationRepo) FindByName(name string) <-chan Result {
 	return output
 }
 
+func (r *invitationRepo) CalculateCount(isAttend bool) <-chan Result {
+	output := make(chan Result)
+
+	go func() {
+		defer close(output)
+
+		query := r.db.C("invitations").Find(bson.M{"is_attend": isAttend})
+		count, err := query.Count()
+		if err != nil {
+			output <- Result{Error: err}
+			return
+		}
+
+		output <- Result{Count: count}
+	}()
+
+	return output
+}
+
 func (r *invitationRepo) Save(obj *model.Invitation) <-chan Result {
 	output := make(chan Result)
 

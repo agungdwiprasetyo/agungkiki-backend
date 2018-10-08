@@ -39,6 +39,14 @@ func (uc *invitationUsecase) GetByName(name string) (int, []model.Invitation) {
 	return result.Count, data
 }
 
+func (uc *invitationUsecase) GetCount(isAttend bool) (int, error) {
+	result := <-uc.repo.CalculateCount(isAttend)
+	if result.Error != nil {
+		return 0, nil
+	}
+	return result.Count, result.Error
+}
+
 func (uc *invitationUsecase) Save(obj *model.Invitation) error {
 	result := <-uc.repo.Save(obj)
 	return result.Error

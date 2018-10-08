@@ -23,3 +23,9 @@ func (p *InvitationPresenter) getByName(params graphql.ResolveParams) (interface
 	_, data := p.invitationUsecase.GetByName(name)
 	return data, nil
 }
+
+// getTotalPresent graphql query
+func (p *InvitationPresenter) getCount(params graphql.ResolveParams) (interface{}, error) {
+	isAttend, _ := params.Args["is_attend"].(bool)
+	return p.invitationUsecase.GetCount(isAttend)
+}

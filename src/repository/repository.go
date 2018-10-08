@@ -16,5 +16,6 @@ type InvitationRepository interface {
 	FindAll() <-chan Result
 	FindByEmail(email string) <-chan Result
 	FindByName(name string) <-chan Result
+	CalculateCount(isAttend bool) <-chan Result
 	Save(data *model.Invitation) <-chan Result
 }

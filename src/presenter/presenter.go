@@ -58,6 +58,16 @@ func (p *InvitationPresenter) initGraphqlRoot(c echo.Context) error {
 					},
 					Resolve: p.getByName,
 				},
+				"get_count": &graphql.Field{
+					Name: "GetCount",
+					Type: graphql.Int,
+					Args: graphql.FieldConfigArgument{
+						"is_attend": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: p.getCount,
+				},
 			},
 		}),
 	})

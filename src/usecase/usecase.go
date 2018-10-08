@@ -10,6 +10,7 @@ type InvitationUsecase interface {
 	GetAll() (int, []model.Invitation)
 	GetByEmail(email string) *model.Invitation
 	GetByName(name string) (int, []model.Invitation)
+	GetCount(isAttend bool) (int, error)
 	Save(data *model.Invitation) error
 }
 

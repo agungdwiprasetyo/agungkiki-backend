@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/agungdwiprasetyo/go-utils/debug"
 	"github.com/labstack/echo"
 )
 
@@ -10,6 +11,7 @@ import (
 func SetCORS() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+
 			c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
 			c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
@@ -17,6 +19,7 @@ func SetCORS() echo.MiddlewareFunc {
 			if c.Request().Method == http.MethodOptions {
 				return c.JSON(200, nil)
 			}
+			debug.Println(c.Request().URL.String())
 			return next(c)
 		}
 	}
