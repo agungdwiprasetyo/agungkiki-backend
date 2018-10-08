@@ -15,12 +15,16 @@ import (
 // Save rest
 func (p *InvitationPresenter) save(c echo.Context) error {
 	response := new(helper.HTTPResponse)
+	response.Success = true
+	response.Code = http.StatusOK
+	response.Message = "Success save"
 
 	var errs error
 	errs = multierror.Append(errs, fmt.Errorf("mantul"))
 
 	var payload model.Invitation
 	if err := c.Bind(&payload); err != nil {
+		response.Success = false
 		response.Code = http.StatusBadRequest
 		response.Message = "error"
 		response.Errors = append(response.Errors, err.Error())
@@ -28,6 +32,7 @@ func (p *InvitationPresenter) save(c echo.Context) error {
 	}
 
 	if err := p.invitationUsecase.Save(&payload); err != nil {
+		response.Success = false
 		response.Code = http.StatusBadRequest
 		response.Message = "error"
 		response.Errors = append(response.Errors, err.Error())
@@ -40,8 +45,5 @@ func (p *InvitationPresenter) save(c echo.Context) error {
 		return response.SetResponse(c)
 	}
 
-	response.Success = true
-	response.Code = http.StatusOK
-	response.Message = "Success save"
 	return response.SetResponse(c)
 }
