@@ -49,15 +49,15 @@ func (p *InvitationPresenter) initGraphqlRoot(c echo.Context) error {
 					},
 					Resolve: p.getAll,
 				},
-				"get_by_email": &graphql.Field{
-					Name: "GetByEmail",
+				"get_by_wa_number": &graphql.Field{
+					Name: "GetByWaNumber",
 					Type: model.InvitationType,
 					Args: graphql.FieldConfigArgument{
-						"email": &graphql.ArgumentConfig{
+						"wa_number": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 					},
-					Resolve: p.getByEmail,
+					Resolve: p.getByWaNumber,
 				},
 				"get_by_name": &graphql.Field{
 					Name: "GetByName",

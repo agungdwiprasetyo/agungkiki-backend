@@ -11,7 +11,7 @@ import (
 type Invitation struct {
 	ID        bson.ObjectId `json:"id" bson:"_id"`
 	Name      string        `json:"name" bson:"name"`
-	Email     string        `json:"email" bson:"email"`
+	WaNumber  string        `json:"waNumber" bson:"wa_number"`
 	Message   string        `json:"message" bson:"message"`
 	IsAttend  bool          `json:"isAttend" bson:"is_attend"`
 	CreatedAt time.Time     `json:"created" bson:"created"`
@@ -26,7 +26,7 @@ var InvitationType = graphql.NewObject(graphql.ObjectConfig{
 		"name": &graphql.Field{
 			Type: graphql.String,
 		},
-		"email": &graphql.Field{
+		"waNumber": &graphql.Field{
 			Type: graphql.String,
 		},
 		"message": &graphql.Field{

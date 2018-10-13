@@ -12,10 +12,10 @@ func (p *InvitationPresenter) getAll(params graphql.ResolveParams) (interface{},
 	return data, nil
 }
 
-// GetByEmail graphql query
-func (p *InvitationPresenter) getByEmail(params graphql.ResolveParams) (interface{}, error) {
-	email, _ := params.Args["email"].(string)
-	data := p.invitationUsecase.GetByEmail(email)
+// GetByWaNumber graphql query
+func (p *InvitationPresenter) getByWaNumber(params graphql.ResolveParams) (interface{}, error) {
+	waNumber, _ := params.Args["wa_number"].(string)
+	data := p.invitationUsecase.GetByWaNumber(waNumber)
 	return data, nil
 }
 

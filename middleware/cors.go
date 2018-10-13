@@ -3,7 +3,6 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/agungdwiprasetyo/go-utils/debug"
 	"github.com/labstack/echo"
 )
 
@@ -19,7 +18,6 @@ func SetCORS() echo.MiddlewareFunc {
 			if c.Request().Method == http.MethodOptions {
 				return c.JSON(200, nil)
 			}
-			debug.Println(c.Request().URL.String())
 			return next(c)
 		}
 	}

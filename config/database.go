@@ -26,7 +26,7 @@ func (d *databaseConn) LoadDB() *mgo.Database {
 	go func() {
 		coll := db.C("invitations")
 		index := mgo.Index{
-			Key:    []string{"email"},
+			Key:    []string{"wa_number"},
 			Unique: true,
 		}
 		coll.EnsureIndex(index)

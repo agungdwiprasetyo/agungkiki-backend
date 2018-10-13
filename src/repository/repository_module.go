@@ -39,14 +39,14 @@ func (r *invitationRepo) FindAll(offset, limit int) <-chan Result {
 	return output
 }
 
-func (r *invitationRepo) FindByEmail(email string) <-chan Result {
+func (r *invitationRepo) FindByWaNumber(waNumber string) <-chan Result {
 	output := make(chan Result)
 
 	go func() {
 		defer close(output)
 
 		var invitation model.Invitation
-		query := bson.M{"email": email}
+		query := bson.M{"wa_number": waNumber}
 		if err := r.db.C("invitations").Find(query).One(&invitation); err != nil {
 			output <- Result{Error: err}
 			return
@@ -118,13 +118,13 @@ func (r *invitationRepo) Save(obj *model.Invitation) <-chan Result {
 	return output
 }
 
-func (r *invitationRepo) RemoveByEmail(email string) <-chan Result {
+func (r *invitationRepo) RemoveByWaNumber(number string) <-chan Result {
 	output := make(chan Result)
 
 	go func() {
 		defer close(output)
 
-		if err := r.db.C("invitations").Remove(bson.M{"email": email}); err != nil {
+		if err := r.db.C("invitations").Remove(bson.M{"wa_number": number}); err != nil {
 			output <- Result{Error: err}
 		}
 	}()

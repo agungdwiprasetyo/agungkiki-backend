@@ -18,24 +18,9 @@ func (p *InvitationPresenter) GetAll(c echo.Context) error {
 	offset, _ := strconv.Atoi(c.QueryParam("offset"))
 	limit, _ := strconv.Atoi(c.QueryParam("limit"))
 	count, data := p.invitationUsecase.GetAll(offset, limit)
-	type responses struct {
-		Meta struct {
-			Offset int `json:"offset"`
-			Limit  int `json:"limit"`
-			Total  int `json:"total"`
-		} `json:"meta"`
-		Data interface{} `json:"data"`
-	}
-	var resp responses
-	resp.Meta.Limit = limit
-	resp.Meta.Offset = offset
-	resp.Meta.Total = count
-	resp.Data = data
 
-	response := new(helper.HTTPResponse)
-	response.Success = true
-	response.Code = http.StatusOK
-	response.Data = resp
+	meta := helper.Meta{Offset: offset, Limit: limit, Total: count}
+	response := helper.NewHTTPResponse(http.StatusOK, "success", data, meta)
 	return response.SetResponse(c)
 }
 
@@ -54,7 +39,6 @@ func (p *InvitationPresenter) Save(c echo.Context) error {
 		response.Success = false
 		response.Code = http.StatusBadRequest
 		response.Message = "error"
-		response.Errors = append(response.Errors, err.Error())
 		return response.SetResponse(c)
 	}
 
@@ -62,10 +46,9 @@ func (p *InvitationPresenter) Save(c echo.Context) error {
 		response.Success = false
 		response.Code = http.StatusBadRequest
 		response.Message = "error"
-		response.Errors = append(response.Errors, err.Error())
 		if strings.Contains(err.Error(), "duplicate") {
 			response.Code = http.StatusConflict
-			response.Message = fmt.Sprintf("Email %s telah mengisi data", payload.Email)
+			response.Message = fmt.Sprintf("Nomor %s telah mengisi data", payload.WaNumber)
 		}
 		errs = multierror.Append(errs, err)
 		debug.Println(errs)

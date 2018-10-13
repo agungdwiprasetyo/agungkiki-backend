@@ -20,8 +20,8 @@ func (uc *invitationUsecase) GetAll(offset, limit int) (int, []model.Invitation)
 	return result.Count, data
 }
 
-func (uc *invitationUsecase) GetByEmail(email string) *model.Invitation {
-	result := <-uc.repo.FindByEmail(email)
+func (uc *invitationUsecase) GetByWaNumber(waNumber string) *model.Invitation {
+	result := <-uc.repo.FindByWaNumber(waNumber)
 	if result.Error != nil {
 		debug.Println(result.Error)
 		return new(model.Invitation)
@@ -53,9 +53,9 @@ func (uc *invitationUsecase) Save(obj *model.Invitation) error {
 	return result.Error
 }
 
-func (uc *invitationUsecase) Remove(emails []string) error {
-	for _, email := range emails {
-		res := <-uc.repo.RemoveByEmail(email)
+func (uc *invitationUsecase) Remove(numbers []string) error {
+	for _, number := range numbers {
+		res := <-uc.repo.RemoveByWaNumber(number)
 		if res.Error != nil {
 			return res.Error
 		}
