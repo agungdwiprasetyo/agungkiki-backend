@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
+	"gopkg.in/mgo.v2"
 )
 
 // Result repository model
@@ -19,4 +20,18 @@ type InvitationRepository interface {
 	CalculateCount(isAttend bool) <-chan Result
 	Save(data *model.Invitation) <-chan Result
 	RemoveByWaNumber(waNumber string) <-chan Result
+}
+
+// UserRepository abstract interface
+type UserRepository interface {
+	FindByUsername(username string) <-chan Result
+	Insert(dataUser *model.User) <-chan Result
+}
+
+type Repository struct {
+	db *mgo.Database
+}
+
+func NewRepository(db *mgo.Database) *Repository {
+	return &Repository{db}
 }

@@ -22,21 +22,21 @@ type Service struct {
 
 // NewService create new service
 func NewService(conf config.Config) *Service {
-	repositoryDecorator := repository.NewInvitationRepository(conf.LoadDB())
+	repositoryDecorator := repository.NewRepository(conf.LoadDB())
 	token := tokenModule.New(conf.LoadPrivateKey(), conf.LoadPublicKey(), 12*time.Hour)
 
 	uc := usecase.NewInvitationUsecase(token, repositoryDecorator)
 
 	service := new(Service)
 	service.conf = conf
-	service.httpHandler = presenter.NewInvitationPresenter(uc)
+	service.httpHandler = presenter.NewInvitationPresenter(uc, middleware.Bearer(token))
 	return service
 }
 
 // ServeHTTP service
 func (serv *Service) ServeHTTP(port int) {
 	app := echo.New()
-	app.Use(middleware.SetCORS(), middleware.Logger())
+	app.Use(middleware.Recover(), middleware.SetCORS(), middleware.Logger())
 
 	storeGroup := app.Group("/invitation")
 	serv.httpHandler.Mount(storeGroup)

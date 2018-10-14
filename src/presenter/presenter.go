@@ -3,6 +3,7 @@ package presenter
 import (
 	"net/http"
 
+	"github.com/agungdwiprasetyo/agungkiki-backend/middleware"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/usecase"
 	"github.com/graphql-go/graphql"
@@ -12,20 +13,24 @@ import (
 // InvitationPresenter model
 type InvitationPresenter struct {
 	invitationUsecase usecase.InvitationUsecase
+	bearerMiddleware  echo.MiddlewareFunc
 }
 
 // NewInvitationPresenter create new invitation presenter
-func NewInvitationPresenter(invitationUsecase usecase.InvitationUsecase) *InvitationPresenter {
-	return &InvitationPresenter{invitationUsecase: invitationUsecase}
+func NewInvitationPresenter(invitationUsecase usecase.InvitationUsecase, mid echo.MiddlewareFunc) *InvitationPresenter {
+	return &InvitationPresenter{invitationUsecase: invitationUsecase, bearerMiddleware: mid}
 }
 
 // Mount http router to presenter
 func (p *InvitationPresenter) Mount(router *echo.Group) {
 	router.GET("/root", p.initGraphqlRoot)
 
-	router.GET("/all", p.GetAll)
+	router.GET("/all", p.GetAll, p.bearerMiddleware)
 	router.POST("/save", p.Save)
-	router.DELETE("/remove", p.Remove)
+	router.DELETE("/remove", p.Remove, p.bearerMiddleware, middleware.Role())
+
+	router.POST("/user/login", p.login)
+	router.POST("/user/new", p.saveUser, p.bearerMiddleware)
 }
 
 // InitGraphqlRoot handler

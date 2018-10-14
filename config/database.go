@@ -30,6 +30,13 @@ func (d *databaseConn) LoadDB() *mgo.Database {
 			Unique: true,
 		}
 		coll.EnsureIndex(index)
+
+		collUser := db.C("users")
+		index = mgo.Index{
+			Key:    []string{"username"},
+			Unique: true,
+		}
+		collUser.EnsureIndex(index)
 	}()
 
 	return db

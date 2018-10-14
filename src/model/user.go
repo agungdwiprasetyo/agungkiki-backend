@@ -7,7 +7,7 @@ type User struct {
 	Name     string        `bson:"name,omitempty" db:"name" json:"name,omitempty"`
 	Username string        `bson:"username,omitempty" db:"username" json:"username,omitempty"`
 	Password string        `bson:"password,omitempty" db:"password" json:"password,omitempty"`
-	Role     *Role         `bson:"-" json:"role,omitempty"`
+	Role     *Role         `bson:"role" json:"role,omitempty"`
 }
 
 type Role struct {

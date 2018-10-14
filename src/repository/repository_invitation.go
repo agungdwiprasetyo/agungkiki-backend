@@ -13,10 +13,10 @@ type invitationRepo struct {
 }
 
 // NewInvitationRepository create new repository
-func NewInvitationRepository(db *mgo.Database) InvitationRepository {
-	repo := new(invitationRepo)
-	repo.db = db
-	return repo
+func NewInvitationRepository(repo *Repository) InvitationRepository {
+	ir := new(invitationRepo)
+	ir.db = repo.db
+	return ir
 }
 
 func (r *invitationRepo) FindAll(offset, limit int) <-chan Result {

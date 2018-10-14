@@ -82,3 +82,36 @@ func (p *InvitationPresenter) Remove(c echo.Context) error {
 
 	return response.SetResponse(c)
 }
+
+func (p *InvitationPresenter) login(c echo.Context) error {
+	var payload struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := c.Bind(&payload); err != nil {
+		response := helper.NewHTTPResponse(http.StatusBadRequest, err.Error())
+		return response.SetResponse(c)
+	}
+	ucRes := p.invitationUsecase.UserLogin(payload.Username, payload.Password)
+	if ucRes.Error != nil {
+		response := helper.NewHTTPResponse(http.StatusBadRequest, ucRes.Error.Error())
+		return response.SetResponse(c)
+	}
+	response := helper.NewHTTPResponse(http.StatusOK, "success", ucRes.Data)
+	return response.SetResponse(c)
+}
+
+func (p *InvitationPresenter) saveUser(c echo.Context) error {
+	var payload model.User
+	if err := c.Bind(&payload); err != nil {
+		response := helper.NewHTTPResponse(http.StatusBadRequest, err.Error())
+		return response.SetResponse(c)
+	}
+	ucRes := p.invitationUsecase.SaveUser(&payload)
+	if ucRes.Error != nil {
+		response := helper.NewHTTPResponse(http.StatusBadRequest, ucRes.Error.Error())
+		return response.SetResponse(c)
+	}
+	response := helper.NewHTTPResponse(http.StatusOK, "success", map[string]interface{}{"userId": ucRes.Data})
+	return response.SetResponse(c)
+}

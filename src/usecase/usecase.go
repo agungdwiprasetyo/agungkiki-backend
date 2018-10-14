@@ -2,8 +2,6 @@ package usecase
 
 import (
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
-	"github.com/agungdwiprasetyo/agungkiki-backend/src/repository"
-	tokenModule "github.com/agungdwiprasetyo/agungkiki-backend/token"
 )
 
 // InvitationUsecase abstract interface
@@ -14,11 +12,6 @@ type InvitationUsecase interface {
 	GetCount(isAttend bool) (int, error)
 	Save(data *model.Invitation) error
 	Remove(numbers []string) error
-}
-
-// NewInvitationUsecase create new usecase
-func NewInvitationUsecase(token *tokenModule.Token, repo repository.InvitationRepository) InvitationUsecase {
-	uc := new(invitationUsecase)
-	uc.repo = repo
-	return uc
+	UserLogin(username, password string) UcResult
+	SaveUser(userData *model.User) UcResult
 }

@@ -1,8 +1,10 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/agungdwiprasetyo/agungkiki-backend/helper"
 	"github.com/labstack/echo"
 )
 
@@ -18,6 +20,23 @@ func SetCORS() echo.MiddlewareFunc {
 			if c.Request().Method == http.MethodOptions {
 				return c.JSON(200, nil)
 			}
+			return next(c)
+		}
+	}
+}
+
+// Recover catch error
+func Recover() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+
+			defer func() {
+				if r := recover(); r != nil {
+					response := helper.NewHTTPResponse(http.StatusInternalServerError, fmt.Sprint(r))
+					response.SetResponse(c)
+				}
+			}()
+
 			return next(c)
 		}
 	}
