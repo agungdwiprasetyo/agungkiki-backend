@@ -2,6 +2,7 @@ package config
 
 import (
 	"crypto/rsa"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -12,7 +13,7 @@ import (
 type rsaKey struct{}
 
 func (j *rsaKey) LoadPrivateKey() *rsa.PrivateKey {
-	signBytes, err := ioutil.ReadFile("config/key/private.key")
+	signBytes, err := ioutil.ReadFile(fmt.Sprintf("%s/config/key/private.key", os.Getenv("APP_PATH")))
 	if err != nil {
 		debug.Println(err)
 		os.Exit(1)
@@ -26,7 +27,7 @@ func (j *rsaKey) LoadPrivateKey() *rsa.PrivateKey {
 }
 
 func (j *rsaKey) LoadPublicKey() *rsa.PublicKey {
-	verifyBytes, err := ioutil.ReadFile("config/key/public.pem")
+	verifyBytes, err := ioutil.ReadFile(fmt.Sprintf("%s/config/key/public.pem", os.Getenv("APP_PATH")))
 	if err != nil {
 		debug.Println(err)
 		os.Exit(1)

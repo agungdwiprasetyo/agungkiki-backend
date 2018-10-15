@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/agungdwiprasetyo/agungkiki-backend/config"
@@ -9,7 +12,13 @@ import (
 )
 
 func main() {
-	if err := env.Load(".env"); err != nil {
+	appPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.Setenv("APP_PATH", appPath)
+
+	if err := env.Load(fmt.Sprintf("%s/.env", appPath)); err != nil {
 		log.Fatal(err)
 	}
 
