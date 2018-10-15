@@ -10,6 +10,9 @@ addons:
     packages:
     - glide
 
+before_install:
+  - export PATH=$PATH:$HOME/.local/bin
+
 install:
   - glide install
   - go build
