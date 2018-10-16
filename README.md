@@ -1,3 +1,3 @@
 # Backend Service
 
-My wedding backend service for management data
+Agung & Kiky wedding backend service for management data
