@@ -15,4 +15,7 @@ before_install:
 
 install:
   - glide install
-  - go build
+
+script:
+  - make test
+  - make build
