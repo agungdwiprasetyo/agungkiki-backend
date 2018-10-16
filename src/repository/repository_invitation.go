@@ -19,14 +19,18 @@ func NewInvitationRepository(repo *Repository) InvitationRepository {
 	return ir
 }
 
-func (r *invitationRepo) FindAll(offset, limit int) <-chan Result {
+func (r *invitationRepo) FindAll(offset, limit int, isAttend *bool) <-chan Result {
 	output := make(chan Result)
 
 	go func() {
 		defer close(output)
 
 		var invitations []model.Invitation
-		query := r.db.C("invitations").Find(bson.M{}).Sort("-created")
+		q := bson.M{}
+		if isAttend != nil {
+			q = bson.M{"is_attend": *isAttend}
+		}
+		query := r.db.C("invitations").Find(q).Sort("-created")
 		count, _ := query.Count()
 		if err := query.Skip(offset).Limit(limit).All(&invitations); err != nil {
 			output <- Result{Error: err}

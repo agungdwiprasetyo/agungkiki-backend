@@ -32,14 +32,22 @@ func NewInvitationUsecase(token *tokenModule.Token, repo *repository.Repository)
 	return uc
 }
 
-func (uc *invitationUsecase) GetAll(offset, limit int) (int, []model.Invitation) {
-	offset = (offset - 1) * limit
-	result := <-uc.invitationRepo.FindAll(offset, limit)
-	if result.Error != nil {
-		return 0, nil
+func (uc *invitationUsecase) GetAll(params *model.AllInvitationParam) (result UcResult) {
+	if params.Page <= 0 {
+		params.Page = 1
 	}
-	data, _ := result.Data.([]model.Invitation)
-	return result.Count, data
+	if params.Limit <= 0 {
+		params.Limit = 10
+	}
+	params.Offset = (params.Page - 1) * params.Limit
+	res := <-uc.invitationRepo.FindAll(params.Offset, params.Limit, params.IsAttend)
+	if res.Error != nil {
+		result.Error = res.Error
+		return
+	}
+	result.Count = res.Count
+	result.Data = res.Data
+	return
 }
 
 func (uc *invitationUsecase) GetByWaNumber(waNumber string) *model.Invitation {

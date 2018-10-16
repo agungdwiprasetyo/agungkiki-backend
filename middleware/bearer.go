@@ -16,21 +16,21 @@ func Bearer(token *tokenModule.Token) echo.MiddlewareFunc {
 
 			authorization := c.Request().Header.Get("Authorization")
 			if authorization == "" {
-				response := helper.NewHTTPResponse(http.StatusUnauthorized, "Access Denied")
+				response := helper.NewHTTPResponse(http.StatusUnauthorized, "Invalid Oauth Token")
 				return response.SetResponse(c)
 			}
 
 			authValues := strings.Split(authorization, " ")
 			authType := strings.ToLower(authValues[0])
 			if authType != "bearer" || len(authValues) != 2 {
-				response := helper.NewHTTPResponse(http.StatusUnauthorized, "Access Denied")
+				response := helper.NewHTTPResponse(http.StatusUnauthorized, "Invalid Oauth Token")
 				return response.SetResponse(c)
 			}
 
 			tokenString := authValues[1]
 			isValid, claims := token.Extract(tokenString)
 			if !isValid {
-				response := helper.NewHTTPResponse(http.StatusUnauthorized, "Access Denied")
+				response := helper.NewHTTPResponse(http.StatusUnauthorized, "Invalid Oauth Token")
 				return response.SetResponse(c)
 			}
 

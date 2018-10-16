@@ -1,15 +1,23 @@
 package presenter
 
 import (
+	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
 	"github.com/graphql-go/graphql"
 )
 
 // GetAll graphql query
 func (p *InvitationPresenter) getAll(params graphql.ResolveParams) (interface{}, error) {
-	offset, _ := params.Args["offset"].(int)
-	limit, _ := params.Args["limit"].(int)
-	_, data := p.invitationUsecase.GetAll(offset, limit)
-	return data, nil
+	var inParams model.AllInvitationParam
+	inParams.Offset, _ = params.Args["offset"].(int)
+	inParams.Limit, _ = params.Args["limit"].(int)
+	if isAttend, ok := params.Args["is_attend"].(bool); ok {
+		inParams.IsAttend = &isAttend
+	}
+	res := p.invitationUsecase.GetAll(&inParams)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return res.Data, nil
 }
 
 // GetByWaNumber graphql query

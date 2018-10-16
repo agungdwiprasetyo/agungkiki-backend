@@ -15,12 +15,20 @@ import (
 
 // GetAll rest
 func (p *InvitationPresenter) GetAll(c echo.Context) error {
-	offset, _ := strconv.Atoi(c.QueryParam("offset"))
-	limit, _ := strconv.Atoi(c.QueryParam("limit"))
-	count, data := p.invitationUsecase.GetAll(offset, limit)
+	var params model.AllInvitationParam
+	params.Page, _ = strconv.Atoi(c.QueryParam("page"))
+	params.Limit, _ = strconv.Atoi(c.QueryParam("limit"))
+	if isAttend, err := strconv.ParseBool(c.QueryParam("isAttend")); err == nil {
+		params.IsAttend = &isAttend
+	}
+	result := p.invitationUsecase.GetAll(&params)
+	if result.Error != nil {
+		response := helper.NewHTTPResponse(http.StatusInternalServerError, result.Error.Error())
+		return response.SetResponse(c)
+	}
 
-	meta := helper.Meta{Offset: offset, Limit: limit, Total: count}
-	response := helper.NewHTTPResponse(http.StatusOK, "success", data, meta)
+	meta := helper.Meta{Page: params.Page, Offset: params.Offset, Limit: params.Limit, Total: result.Count}
+	response := helper.NewHTTPResponse(http.StatusOK, "success", result.Data, meta)
 	return response.SetResponse(c)
 }
 

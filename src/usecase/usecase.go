@@ -6,7 +6,7 @@ import (
 
 // InvitationUsecase abstract interface
 type InvitationUsecase interface {
-	GetAll(offset, limit int) (int, []model.Invitation)
+	GetAll(params *model.AllInvitationParam) UcResult
 	GetByWaNumber(waNumber string) *model.Invitation
 	GetByName(name string) (int, []model.Invitation)
 	GetCount(isAttend bool) (int, error)

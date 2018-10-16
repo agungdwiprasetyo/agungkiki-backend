@@ -14,7 +14,7 @@ type Result struct {
 
 // InvitationRepository abstract interface
 type InvitationRepository interface {
-	FindAll(offset, limit int) <-chan Result
+	FindAll(offset, limit int, isAttend *bool) <-chan Result
 	FindByWaNumber(waNumber string) <-chan Result
 	FindByName(name string) <-chan Result
 	CalculateCount(isAttend bool) <-chan Result

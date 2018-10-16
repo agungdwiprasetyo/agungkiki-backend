@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/agungdwiprasetyo/agungkiki-backend/config"
+	"github.com/agungdwiprasetyo/agungkiki-backend/helper"
 	"github.com/agungdwiprasetyo/agungkiki-backend/middleware"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/presenter"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/repository"
@@ -16,30 +18,37 @@ import (
 
 // Service main model
 type Service struct {
-	conf        config.Config
-	httpHandler *presenter.InvitationPresenter
+	conf  config.Config
+	token *tokenModule.Token
 }
 
 // NewService create new service
 func NewService(conf config.Config) *Service {
-	repositoryDecorator := repository.NewRepository(conf.LoadDB())
 	token := tokenModule.New(conf.LoadPrivateKey(), conf.LoadPublicKey(), 12*time.Hour)
-
-	uc := usecase.NewInvitationUsecase(token, repositoryDecorator)
 
 	service := new(Service)
 	service.conf = conf
-	service.httpHandler = presenter.NewInvitationPresenter(uc, middleware.Bearer(token))
+	service.token = token
 	return service
 }
 
 // ServeHTTP service
 func (serv *Service) ServeHTTP(port int) {
+	repositoryDecorator := repository.NewRepository(serv.conf.LoadDB())
+	bearerMiddleware := middleware.Bearer(serv.token)
+	uc := usecase.NewInvitationUsecase(serv.token, repositoryDecorator)
+	invitationPresenter := presenter.NewInvitationPresenter(uc, bearerMiddleware)
+
 	app := echo.New()
 	app.Use(middleware.Recover(), middleware.SetCORS(), middleware.Logger())
 
-	storeGroup := app.Group("/invitation")
-	serv.httpHandler.Mount(storeGroup)
+	app.GET("/", func(c echo.Context) error {
+		response := helper.NewHTTPResponse(http.StatusOK, "ok")
+		return response.SetResponse(c)
+	}, bearerMiddleware)
+
+	invitationGroup := app.Group("/invitation")
+	invitationPresenter.Mount(invitationGroup)
 
 	appPort := fmt.Sprintf(":%d", port)
 	if err := app.Start(appPort); err != nil {

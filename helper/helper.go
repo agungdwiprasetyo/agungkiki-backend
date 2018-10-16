@@ -8,7 +8,7 @@ import (
 
 // HTTPResponse model
 type HTTPResponse struct {
-	Code    int         `json:"-"`
+	Code    int         `json:"status"`
 	Success bool        `json:"success"`
 	Message string      `json:"message"`
 	Meta    *Meta       `json:"meta,omitempty"`
@@ -17,6 +17,7 @@ type HTTPResponse struct {
 
 // Meta model
 type Meta struct {
+	Page   int `json:"page"`
 	Offset int `json:"offset"`
 	Limit  int `json:"limit"`
 	Total  int `json:"totalRecords"`
