@@ -10,7 +10,7 @@ import (
 )
 
 // Bearer jwt token middleware
-func Bearer(token *tokenModule.Token) echo.MiddlewareFunc {
+func Bearer(token tokenModule.Token) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 

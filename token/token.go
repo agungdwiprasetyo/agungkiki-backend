@@ -7,10 +7,16 @@ import (
 	"time"
 
 	model "github.com/agungdwiprasetyo/agungkiki-backend/src/model"
-	"gopkg.in/mgo.v2/bson"
-
 	jwt "github.com/dgrijalva/jwt-go"
+	"gopkg.in/mgo.v2/bson"
 )
+
+// Token module abstraction
+type Token interface {
+	Generate(cl *Claim) (string, error)
+	Refresh(tokenString string) (string, error)
+	Extract(tokenString string) (bool, *Claim)
+}
 
 type Claim struct {
 	Audience string      `json:"audience,omitempty"`
@@ -32,21 +38,21 @@ func NewClaim(dataUser *model.User) *Claim {
 	return cl
 }
 
-type Token struct {
+type tokenImpl struct {
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
 	age        time.Duration
 }
 
-func New(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey, age time.Duration) *Token {
-	tok := new(Token)
+func New(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey, age time.Duration) Token {
+	tok := new(tokenImpl)
 	tok.privateKey = privateKey
 	tok.publicKey = publicKey
 	tok.age = age
 	return tok
 }
 
-func (t *Token) Generate(cl *Claim) (string, error) {
+func (t *tokenImpl) Generate(cl *Claim) (string, error) {
 	token := jwt.New(jwt.SigningMethodRS256)
 	claims := make(jwt.MapClaims)
 	claims["exp"] = time.Now().Add(t.age).Unix()
@@ -61,7 +67,7 @@ func (t *Token) Generate(cl *Claim) (string, error) {
 	return tokenString, nil
 }
 
-func (t *Token) Refresh(tokenString string) (string, error) {
+func (t *tokenImpl) Refresh(tokenString string) (string, error) {
 	splitToken := strings.Split(tokenString, ".")
 	if len(splitToken) != 3 {
 		return "", fmt.Errorf("Token Invalid")
@@ -84,7 +90,7 @@ func (t *Token) Refresh(tokenString string) (string, error) {
 	return tokenString, nil
 }
 
-func (t *Token) Extract(tokenString string) (bool, *Claim) {
+func (t *tokenImpl) Extract(tokenString string) (bool, *Claim) {
 	splitToken := strings.Split(tokenString, ".")
 	if len(splitToken) != 3 {
 		return false, nil

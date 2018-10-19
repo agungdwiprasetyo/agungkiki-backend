@@ -19,7 +19,7 @@ import (
 // Service main model
 type Service struct {
 	conf  config.Config
-	token *tokenModule.Token
+	token tokenModule.Token
 }
 
 // NewService create new service

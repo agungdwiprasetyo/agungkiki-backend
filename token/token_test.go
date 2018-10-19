@@ -28,7 +28,7 @@ func TestNew(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *Token
+		want *tokenImpl
 	}{
 		{
 			name: "Testcase #1: Positive",
@@ -37,7 +37,7 @@ func TestNew(t *testing.T) {
 				publicKey:  conf.LoadPublicKey(),
 				age:        12 * time.Hour,
 			},
-			want: &Token{
+			want: &tokenImpl{
 				privateKey: conf.LoadPrivateKey(),
 				publicKey:  conf.LoadPublicKey(),
 				age:        12 * time.Hour,
@@ -95,7 +95,7 @@ func TestToken_Generate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tok := &Token{
+			tok := &tokenImpl{
 				privateKey: tt.fields.privateKey,
 				publicKey:  tt.fields.publicKey,
 				age:        tt.fields.age,
@@ -148,7 +148,7 @@ func TestToken_Extract(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tok := &Token{
+			tok := &tokenImpl{
 				privateKey: tt.fields.privateKey,
 				publicKey:  tt.fields.publicKey,
 				age:        tt.fields.age,

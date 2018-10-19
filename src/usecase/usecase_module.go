@@ -18,13 +18,13 @@ type UcResult struct {
 }
 
 type invitationUsecase struct {
-	token          *tokenModule.Token
+	token          tokenModule.Token
 	invitationRepo repository.InvitationRepository
 	userRepo       repository.UserRepository
 }
 
 // NewInvitationUsecase create new usecase
-func NewInvitationUsecase(token *tokenModule.Token, repo *repository.Repository) InvitationUsecase {
+func NewInvitationUsecase(token tokenModule.Token, repo *repository.Repository) InvitationUsecase {
 	uc := new(invitationUsecase)
 	uc.token = token
 	uc.invitationRepo = repository.NewInvitationRepository(repo)
