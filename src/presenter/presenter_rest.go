@@ -32,6 +32,13 @@ func (p *InvitationPresenter) GetAll(c echo.Context) error {
 	return response.SetResponse(c)
 }
 
+// GetEvents rest
+func (p *InvitationPresenter) GetEvents(c echo.Context) error {
+	res := p.invitationUsecase.GetEvent()
+	response := helper.NewHTTPResponse(http.StatusOK, "success", res.Data)
+	return response.SetResponse(c)
+}
+
 // Save rest
 func (p *InvitationPresenter) Save(c echo.Context) error {
 	response := new(helper.HTTPResponse)

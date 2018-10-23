@@ -78,6 +78,17 @@ func (uc *invitationUsecase) GetCount(isAttend bool) (int, error) {
 	return result.Count, result.Error
 }
 
+func (uc *invitationUsecase) GetEvent() (result UcResult) {
+	res := <-uc.invitationRepo.FindEvents()
+	if res.Error != nil {
+		result.Error = res.Error
+		return
+	}
+
+	result.Data = res.Data
+	return
+}
+
 func (uc *invitationUsecase) Save(obj *model.Invitation) error {
 	result := <-uc.invitationRepo.Save(obj)
 	return result.Error

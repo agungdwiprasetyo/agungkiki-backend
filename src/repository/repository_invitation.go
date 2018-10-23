@@ -101,6 +101,25 @@ func (r *invitationRepo) CalculateCount(isAttend bool) <-chan Result {
 	return output
 }
 
+func (r *invitationRepo) FindEvents() <-chan Result {
+	output := make(chan Result)
+
+	go func() {
+		defer close(output)
+
+		var event = model.Event{
+			Date:      "Sunday, December 30 2018",
+			Ceremony:  "09.00 a.m",
+			Reception: "11.00 a.m - finish",
+			Address:   "Jl. H. Liyas II No. 77, Paninggilan Utara, Ciledug, Kota Tangerang, Banten, 15153",
+		}
+
+		output <- Result{Data: event}
+	}()
+
+	return output
+}
+
 func (r *invitationRepo) Save(obj *model.Invitation) <-chan Result {
 	output := make(chan Result)
 
