@@ -14,6 +14,7 @@ import (
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/usecase"
 	tokenModule "github.com/agungdwiprasetyo/agungkiki-backend/token"
 	"github.com/labstack/echo"
+	echoMid "github.com/labstack/echo/middleware"
 )
 
 // Service main model
@@ -40,7 +41,7 @@ func (serv *Service) ServeHTTP(port int) {
 	invitationPresenter := presenter.NewInvitationPresenter(uc, bearerMiddleware)
 
 	app := echo.New()
-	app.Use(middleware.Recover(), middleware.SetCORS(), middleware.Logger())
+	app.Use(middleware.Recover(), middleware.Logger(), echoMid.CORS())
 
 	app.GET("/", func(c echo.Context) error {
 		response := helper.NewHTTPResponse(http.StatusOK, "ok")
