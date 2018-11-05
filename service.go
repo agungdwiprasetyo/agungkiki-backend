@@ -41,7 +41,12 @@ func (serv *Service) ServeHTTP(port int) {
 	invitationPresenter := presenter.NewInvitationPresenter(uc, bearerMiddleware)
 
 	app := echo.New()
-	app.Use(middleware.Recover(), middleware.Logger(), echoMid.CORS())
+	app.Use(middleware.Recover(), middleware.Logger(), echoMid.CORSWithConfig(echoMid.CORSConfig{
+		Skipper:          echoMid.DefaultSkipper,
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+		AllowCredentials: true,
+	}))
 
 	app.GET("/", func(c echo.Context) error {
 		response := helper.NewHTTPResponse(http.StatusOK, "ok")
