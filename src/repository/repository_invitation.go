@@ -151,7 +151,10 @@ func (r *invitationRepo) SaveEvent(obj *model.Event) <-chan Result {
 		query := bson.M{"code": "ev001"}
 
 		res := <-r.FindEvents()
-		oldObj, _ := res.Data.(model.Event)
+		oldObj, ok := res.Data.(model.Event)
+		if !ok {
+			oldObj.ID = bson.NewObjectId()
+		}
 
 		obj.ID = oldObj.ID
 		_, err := coll.Upsert(query, obj)
