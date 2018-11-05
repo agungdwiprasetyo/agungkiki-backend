@@ -27,6 +27,7 @@ func (p *InvitationPresenter) Mount(router *echo.Group) {
 
 	router.GET("/all", p.GetAll, p.bearerMiddleware)
 	router.GET("/event", p.GetEvents)
+	router.POST("/event/save", p.saveEvent, p.bearerMiddleware)
 	router.POST("/save", p.Save)
 	router.DELETE("/remove", p.Remove, p.bearerMiddleware, middleware.Role())
 

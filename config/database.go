@@ -31,12 +31,19 @@ func (d *databaseConn) LoadDB() *mgo.Database {
 		}
 		coll.EnsureIndex(index)
 
-		collUser := db.C("users")
+		coll = db.C("users")
 		index = mgo.Index{
 			Key:    []string{"username"},
 			Unique: true,
 		}
-		collUser.EnsureIndex(index)
+		coll.EnsureIndex(index)
+
+		coll = db.C("events")
+		index = mgo.Index{
+			Key:    []string{"code"},
+			Unique: true,
+		}
+		coll.EnsureIndex(index)
 	}()
 
 	return db

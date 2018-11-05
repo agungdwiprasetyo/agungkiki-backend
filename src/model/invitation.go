@@ -19,10 +19,12 @@ type Invitation struct {
 
 // Event model
 type Event struct {
-	Date      string `bson:"date" json:"date"`
-	Ceremony  string `bson:"ceremony" json:"ceremony"`
-	Reception string `bson:"reception" json:"reception"`
-	Address   string `bson:"address" json:"address"`
+	ID        bson.ObjectId `json:"id" bson:"_id"`
+	Code      string        `json:"code" bson:"code"`
+	Date      string        `bson:"date" json:"date"`
+	Ceremony  string        `bson:"ceremony" json:"ceremony"`
+	Reception string        `bson:"reception" json:"reception"`
+	Address   string        `bson:"address" json:"address"`
 }
 
 var InvitationType = graphql.NewObject(graphql.ObjectConfig{

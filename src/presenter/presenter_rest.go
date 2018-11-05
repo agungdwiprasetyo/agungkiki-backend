@@ -130,3 +130,18 @@ func (p *InvitationPresenter) saveUser(c echo.Context) error {
 	response := helper.NewHTTPResponse(http.StatusOK, "success", map[string]interface{}{"userId": ucRes.Data})
 	return response.SetResponse(c)
 }
+
+func (p *InvitationPresenter) saveEvent(c echo.Context) error {
+	var payload model.Event
+	if err := c.Bind(&payload); err != nil {
+		response := helper.NewHTTPResponse(http.StatusBadRequest, err.Error())
+		return response.SetResponse(c)
+	}
+	err := p.invitationUsecase.SaveEvent(&payload)
+	if err != nil {
+		response := helper.NewHTTPResponse(http.StatusBadRequest, err.Error())
+		return response.SetResponse(c)
+	}
+	response := helper.NewHTTPResponse(http.StatusOK, "success")
+	return response.SetResponse(c)
+}

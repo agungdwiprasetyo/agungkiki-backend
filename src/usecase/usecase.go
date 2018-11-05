@@ -15,4 +15,5 @@ type InvitationUsecase interface {
 	Remove(numbers []string) error
 	UserLogin(username, password string) UcResult
 	SaveUser(userData *model.User) UcResult
+	SaveEvent(data *model.Event) error
 }

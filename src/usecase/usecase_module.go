@@ -145,3 +145,8 @@ func (uc *invitationUsecase) SaveUser(dataUser *model.User) (result UcResult) {
 	result.Data = res.Data
 	return
 }
+
+func (uc *invitationUsecase) SaveEvent(obj *model.Event) error {
+	result := <-uc.invitationRepo.SaveEvent(obj)
+	return result.Error
+}

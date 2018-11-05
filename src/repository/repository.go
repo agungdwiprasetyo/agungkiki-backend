@@ -20,6 +20,7 @@ type InvitationRepository interface {
 	CalculateCount(isAttend bool) <-chan Result
 	FindEvents() <-chan Result
 	Save(data *model.Invitation) <-chan Result
+	SaveEvent(data *model.Event) <-chan Result
 	RemoveByWaNumber(waNumber string) <-chan Result
 }
 

@@ -107,11 +107,11 @@ func (r *invitationRepo) FindEvents() <-chan Result {
 	go func() {
 		defer close(output)
 
-		var event = model.Event{
-			Date:      "Sunday, December 30 2018",
-			Ceremony:  "09.00 a.m",
-			Reception: "11.00 a.m - finish",
-			Address:   "Jl. H. Liyas II No. 77, Paninggilan Utara, Ciledug, Kota Tangerang, Banten, 15153",
+		var event model.Event
+		query := bson.M{"code": "ev001"}
+		if err := r.db.C("events").Find(query).One(&event); err != nil {
+			output <- Result{Error: err}
+			return
 		}
 
 		output <- Result{Data: event}
@@ -131,6 +131,31 @@ func (r *invitationRepo) Save(obj *model.Invitation) <-chan Result {
 		obj.ID = bson.NewObjectId()
 		obj.CreatedAt = time.Now().In(loc)
 		if err := r.db.C("invitations").Insert(obj); err != nil {
+			output <- Result{Error: err}
+			return
+		}
+
+		output <- Result{Data: obj}
+	}()
+
+	return output
+}
+
+func (r *invitationRepo) SaveEvent(obj *model.Event) <-chan Result {
+	output := make(chan Result)
+
+	go func() {
+		defer close(output)
+
+		coll := r.db.C("events")
+		query := bson.M{"code": "ev001"}
+
+		res := <-r.FindEvents()
+		oldObj, _ := res.Data.(model.Event)
+
+		obj.ID = oldObj.ID
+		_, err := coll.Upsert(query, obj)
+		if err != nil {
 			output <- Result{Error: err}
 			return
 		}
