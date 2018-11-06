@@ -3,6 +3,7 @@ package presenter
 import (
 	"net/http"
 
+	"github.com/agungdwiprasetyo/agungkiki-backend/helper"
 	"github.com/agungdwiprasetyo/agungkiki-backend/middleware"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/usecase"
@@ -23,6 +24,8 @@ func NewInvitationPresenter(invitationUsecase usecase.InvitationUsecase, mid ech
 
 // Mount http router to presenter
 func (p *InvitationPresenter) Mount(router *echo.Group) {
+	router.GET("/auth", p.auth, p.bearerMiddleware)
+
 	router.GET("/root", p.initGraphqlRoot)
 
 	router.GET("/all", p.GetAll, p.bearerMiddleware)
@@ -33,6 +36,11 @@ func (p *InvitationPresenter) Mount(router *echo.Group) {
 
 	router.POST("/user/login", p.login)
 	router.POST("/user/new", p.saveUser, p.bearerMiddleware)
+}
+
+func (p *InvitationPresenter) auth(c echo.Context) error {
+	response := helper.NewHTTPResponse(http.StatusOK, "ok")
+	return response.SetResponse(c)
 }
 
 // InitGraphqlRoot handler
