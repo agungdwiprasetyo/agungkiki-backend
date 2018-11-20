@@ -13,6 +13,7 @@ type Invitation struct {
 	Name      string        `json:"name" bson:"name"`
 	WaNumber  string        `json:"waNumber" bson:"wa_number"`
 	Message   string        `json:"message" bson:"message"`
+	Relation  string        `json:"relation" bson:"relation"`
 	IsAttend  bool          `json:"isAttend" bson:"is_attend"`
 	CreatedAt time.Time     `json:"created" bson:"created"`
 }
