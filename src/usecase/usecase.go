@@ -16,4 +16,5 @@ type InvitationUsecase interface {
 	UserLogin(username, password string) UcResult
 	SaveUser(userData *model.User) UcResult
 	SaveEvent(data *model.Event) error
+	AddVisitor(ipAddress, query string)
 }

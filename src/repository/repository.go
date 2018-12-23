@@ -22,6 +22,7 @@ type InvitationRepository interface {
 	Save(data *model.Invitation) <-chan Result
 	SaveEvent(data *model.Event) <-chan Result
 	RemoveByWaNumber(waNumber string) <-chan Result
+	AddVisitor(obj *model.Visitor) <-chan error
 }
 
 // UserRepository abstract interface

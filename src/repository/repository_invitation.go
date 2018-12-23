@@ -182,3 +182,22 @@ func (r *invitationRepo) RemoveByWaNumber(number string) <-chan Result {
 
 	return output
 }
+
+func (r *invitationRepo) AddVisitor(obj *model.Visitor) <-chan error {
+	output := make(chan error)
+
+	go func() {
+		defer close(output)
+
+		loc, _ := time.LoadLocation("Asia/Jakarta")
+
+		obj.ID = bson.NewObjectId()
+		obj.Datetime = time.Now().In(loc)
+		if err := r.db.C("visitors").Insert(obj); err != nil {
+			output <- err
+			return
+		}
+	}()
+
+	return output
+}

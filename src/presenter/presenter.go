@@ -1,11 +1,12 @@
 package presenter
 
 import (
+	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/agungdwiprasetyo/agungkiki-backend/helper"
 	"github.com/agungdwiprasetyo/agungkiki-backend/middleware"
-	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/usecase"
 	"github.com/graphql-go/graphql"
 	"github.com/labstack/echo"
@@ -15,6 +16,7 @@ import (
 type InvitationPresenter struct {
 	invitationUsecase usecase.InvitationUsecase
 	bearerMiddleware  echo.MiddlewareFunc
+	graphqlSchema     graphql.Schema
 }
 
 // NewInvitationPresenter create new invitation presenter
@@ -24,10 +26,11 @@ func NewInvitationPresenter(invitationUsecase usecase.InvitationUsecase, mid ech
 
 // Mount http router to presenter
 func (p *InvitationPresenter) Mount(router *echo.Group) {
+	p.graphqlSchema, _ = p.initGraphQlSchema()
+
+	router.Any("/graphql", p.handleGraphqlRoot)
+
 	router.GET("/auth", p.auth, p.bearerMiddleware)
-
-	router.GET("/root", p.initGraphqlRoot)
-
 	router.GET("/all", p.GetAll, p.bearerMiddleware)
 	router.GET("/event", p.GetEvents)
 	router.POST("/event/save", p.saveEvent, p.bearerMiddleware)
@@ -44,69 +47,24 @@ func (p *InvitationPresenter) auth(c echo.Context) error {
 }
 
 // InitGraphqlRoot handler
-func (p *InvitationPresenter) initGraphqlRoot(c echo.Context) error {
-	query := c.QueryParam("query")
-
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: graphql.NewObject(graphql.ObjectConfig{
-			Name: "RootQuery",
-			Fields: graphql.Fields{
-				"get_all_invitation": &graphql.Field{
-					Name: "GetAll",
-					Type: graphql.NewList(model.InvitationType),
-					Args: graphql.FieldConfigArgument{
-						"offset": &graphql.ArgumentConfig{
-							Type: graphql.Int,
-						},
-						"limit": &graphql.ArgumentConfig{
-							Type: graphql.Int,
-						},
-					},
-					Resolve: p.getAll,
-				},
-				"get_by_wa_number": &graphql.Field{
-					Name: "GetByWaNumber",
-					Type: model.InvitationType,
-					Args: graphql.FieldConfigArgument{
-						"wa_number": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-					},
-					Resolve: p.getByWaNumber,
-				},
-				"get_by_name": &graphql.Field{
-					Name: "GetByName",
-					Type: graphql.NewList(model.InvitationType),
-					Args: graphql.FieldConfigArgument{
-						"name": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-					},
-					Resolve: p.getByName,
-				},
-				"get_count": &graphql.Field{
-					Name: "GetCount",
-					Type: graphql.Int,
-					Args: graphql.FieldConfigArgument{
-						"is_attend": &graphql.ArgumentConfig{
-							Type: graphql.Boolean,
-						},
-					},
-					Resolve: p.getCount,
-				},
-			},
-		}),
-	})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+func (p *InvitationPresenter) handleGraphqlRoot(c echo.Context) error {
+	var query string
+	if query = c.QueryParam("query"); query == "" {
+		queryBody, _ := ioutil.ReadAll(c.Request().Body)
+		query = string(queryBody)
 	}
 
 	result := graphql.Do(graphql.Params{
-		Schema:        schema,
+		Schema:        p.graphqlSchema,
 		RequestString: query,
 	})
 	if result.HasErrors() {
-		return echo.NewHTTPError(http.StatusBadRequest, map[string]interface{}{"errors": result.Errors})
+		response := helper.NewHTTPResponse(http.StatusBadRequest, "Query error", result.Errors)
+		return response.SetResponse(c)
+	}
+
+	if strings.Contains(query, "get_count") {
+		p.invitationUsecase.AddVisitor(c.RealIP(), query)
 	}
 
 	return c.JSON(http.StatusOK, result)

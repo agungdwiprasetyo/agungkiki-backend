@@ -5,6 +5,65 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+func (p *InvitationPresenter) initGraphQlSchema() (graphql.Schema, error) {
+	schema, err := graphql.NewSchema(graphql.SchemaConfig{
+		Query: graphql.NewObject(graphql.ObjectConfig{
+			Name: "RootQuery",
+			Fields: graphql.Fields{
+				"get_all_invitation": &graphql.Field{
+					Name: "GetAll",
+					Type: graphql.NewList(new(model.Invitation).MakeObject()),
+					Args: graphql.FieldConfigArgument{
+						"offset": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+						"limit": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+					},
+					Resolve: p.getAll,
+				},
+				"get_by_wa_number": &graphql.Field{
+					Name: "GetByWaNumber",
+					Type: new(model.Invitation).MakeObject(),
+					Args: graphql.FieldConfigArgument{
+						"wa_number": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: p.getByWaNumber,
+				},
+				"get_by_name": &graphql.Field{
+					Name: "GetByName",
+					Type: graphql.NewList(new(model.Invitation).MakeObject()),
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: p.getByName,
+				},
+				"get_count": &graphql.Field{
+					Name: "GetCount",
+					Type: graphql.Int,
+					Args: graphql.FieldConfigArgument{
+						"is_attend": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: p.getCount,
+				},
+				"get_event": &graphql.Field{
+					Name:    "GetEvent",
+					Type:    new(model.Event).MakeObject(),
+					Resolve: p.getEvent,
+				},
+			},
+		}),
+	})
+	return schema, err
+}
+
 // GetAll graphql query
 func (p *InvitationPresenter) getAll(params graphql.ResolveParams) (interface{}, error) {
 	var inParams model.AllInvitationParam
@@ -38,4 +97,9 @@ func (p *InvitationPresenter) getByName(params graphql.ResolveParams) (interface
 func (p *InvitationPresenter) getCount(params graphql.ResolveParams) (interface{}, error) {
 	isAttend, _ := params.Args["is_attend"].(bool)
 	return p.invitationUsecase.GetCount(isAttend)
+}
+
+func (p *InvitationPresenter) getEvent(params graphql.ResolveParams) (interface{}, error) {
+	result := p.invitationUsecase.GetEvent()
+	return result.Data, result.Error
 }

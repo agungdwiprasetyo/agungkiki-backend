@@ -13,6 +13,7 @@ type HTTPResponse struct {
 	Message string      `json:"message"`
 	Meta    *Meta       `json:"meta,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
+	Error   interface{} `json:"error,omitempty"`
 }
 
 // Meta model
@@ -49,6 +50,7 @@ func NewHTTPResponse(code int, message string, params ...interface{}) *HTTPRespo
 // SetResponse method
 func (h *HTTPResponse) SetResponse(c echo.Context) error {
 	if !h.Success {
+		h.Error = h.Data
 		h.Data = nil
 	}
 	return c.JSON(h.Code, h)

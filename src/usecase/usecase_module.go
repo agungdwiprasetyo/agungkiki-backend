@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/repository"
@@ -85,7 +86,14 @@ func (uc *invitationUsecase) GetEvent() (result UcResult) {
 		return
 	}
 
-	result.Data = res.Data
+	event, _ := res.Data.(model.Event)
+	ceremony, _ := time.Parse(time.RFC3339, "2018-12-30T08:00:00+07:00")
+	event.CountDown = int(ceremony.Sub(time.Now()) / time.Second)
+	if event.CountDown < 0 {
+		event.CountDown = 0
+	}
+
+	result.Data = event
 	return
 }
 
@@ -149,4 +157,8 @@ func (uc *invitationUsecase) SaveUser(dataUser *model.User) (result UcResult) {
 func (uc *invitationUsecase) SaveEvent(obj *model.Event) error {
 	result := <-uc.invitationRepo.SaveEvent(obj)
 	return result.Error
+}
+
+func (uc *invitationUsecase) AddVisitor(ipAddress, query string) {
+	uc.invitationRepo.AddVisitor(&model.Visitor{IPAddress: ipAddress, Query: query})
 }
