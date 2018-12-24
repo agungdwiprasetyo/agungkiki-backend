@@ -201,3 +201,26 @@ func (r *invitationRepo) AddVisitor(obj *model.Visitor) <-chan error {
 
 	return output
 }
+
+func (r *invitationRepo) FetchVisitor(startDate, endDate time.Time) <-chan Result {
+	output := make(chan Result)
+
+	go func() {
+		defer close(output)
+
+		var data []model.Visitor
+		if err := r.db.C("visitors").Find(
+			bson.M{
+				"datetime": bson.M{
+					"$gt": startDate,
+					"$lt": endDate,
+				},
+			}).All(&data); err != nil {
+			output <- Result{Error: err}
+			return
+		}
+		output <- Result{Data: data}
+	}()
+
+	return output
+}

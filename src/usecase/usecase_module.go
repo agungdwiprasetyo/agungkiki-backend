@@ -162,3 +162,29 @@ func (uc *invitationUsecase) SaveEvent(obj *model.Event) error {
 func (uc *invitationUsecase) AddVisitor(ipAddress, query string) {
 	uc.invitationRepo.AddVisitor(&model.Visitor{IPAddress: ipAddress, Query: query})
 }
+
+func (uc *invitationUsecase) GetVisitor(startDate, endDate string) (result UcResult) {
+	defer func() {
+		if r := recover(); r != nil {
+			result.Error = fmt.Errorf("%v", r)
+		}
+	}()
+
+	fromDate, err := time.Parse(time.RFC3339, startDate)
+	if err != nil {
+		panic(err)
+	}
+	toDate, err := time.Parse(time.RFC3339, endDate)
+	if err != nil {
+		panic(err)
+	}
+
+	repoRes := <-uc.invitationRepo.FetchVisitor(fromDate, toDate)
+	if repoRes.Error != nil {
+		panic(repoRes.Error)
+	}
+
+	result.Data = repoRes.Data
+	debug.PrintJSON(result)
+	return
+}

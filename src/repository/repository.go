@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/agungdwiprasetyo/agungkiki-backend/src/model"
 	"gopkg.in/mgo.v2"
 )
@@ -23,6 +25,7 @@ type InvitationRepository interface {
 	SaveEvent(data *model.Event) <-chan Result
 	RemoveByWaNumber(waNumber string) <-chan Result
 	AddVisitor(obj *model.Visitor) <-chan error
+	FetchVisitor(startDate, endDate time.Time) <-chan Result
 }
 
 // UserRepository abstract interface

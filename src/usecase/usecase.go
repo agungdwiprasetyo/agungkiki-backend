@@ -17,4 +17,5 @@ type InvitationUsecase interface {
 	SaveUser(userData *model.User) UcResult
 	SaveEvent(data *model.Event) error
 	AddVisitor(ipAddress, query string)
+	GetVisitor(startDate, endDate string) (result UcResult)
 }

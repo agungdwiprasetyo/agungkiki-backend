@@ -58,6 +58,19 @@ func (p *InvitationPresenter) initGraphQlSchema() (graphql.Schema, error) {
 					Type:    new(model.Event).MakeObject(),
 					Resolve: p.getEvent,
 				},
+				"get_visitor": &graphql.Field{
+					Name: "GetVisitor",
+					Type: graphql.NewList(new(model.Visitor).MakeObject()),
+					Args: graphql.FieldConfigArgument{
+						"from_date": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"to_date": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: p.getVisitor,
+				},
 			},
 		}),
 	})
@@ -101,5 +114,12 @@ func (p *InvitationPresenter) getCount(params graphql.ResolveParams) (interface{
 
 func (p *InvitationPresenter) getEvent(params graphql.ResolveParams) (interface{}, error) {
 	result := p.invitationUsecase.GetEvent()
+	return result.Data, result.Error
+}
+
+func (p *InvitationPresenter) getVisitor(params graphql.ResolveParams) (interface{}, error) {
+	fromDate, _ := params.Args["from_date"].(string)
+	toDate, _ := params.Args["to_date"].(string)
+	result := p.invitationUsecase.GetVisitor(fromDate, toDate)
 	return result.Data, result.Error
 }
